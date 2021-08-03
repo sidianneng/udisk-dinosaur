@@ -6,13 +6,16 @@
 
 sprite_obstacle:
 .byte 0x18,0x20,0xfe,0xfc,0x30,0x1e
-;.byte 0x10,0x20,0xf8,0x20,0x10,0x00;small cactus
-;.byte 0x0c,0x10,0xff,0xfe,0x10,0x0f;big cactus
+
+sprite_obstacle_small:
+.byte 0x10,0x20,0xf8,0x20,0x10,0x00;small cactus
+
+sprite_obstacle_bit:
+.byte 0x0c,0x10,0xff,0xfe,0x10,0x0f;big cactus
 
 #define col_cnt     R19
 #define x_pos       R21
 #define sprite_w    R22
-
 
 ; .section .data
 ; enemy_pos: .space 3
@@ -38,9 +41,19 @@ print_enemies:
     ld      x_pos, Y+           ; Load obstacle position
 loop_comlumns:
     cp      col_cnt, x_pos      ; Compare enemy position with current column drawn
-    brne    blank_col           
+    brne    blank_col   
+    lds     R27, rand	
+	cpi     R27, 128
+	brlo    obstacle_small
+	dec     R27
     ldi     ZL, lo8(sprite_obstacle+0x4000) ; Load sprite position pointer
     ldi     ZH, hi8(sprite_obstacle+0x4000)
+	rjmp    test1
+obstacle_small:
+    ldi     ZL, lo8(sprite_obstacle_small+0x4000) ; Load sprite position pointer
+    ldi     ZH, hi8(sprite_obstacle_small+0x4000)	
+test1:
+	sts     rand, R27
     ldi     sprite_w, 5         ; Sprite width -1
 print_sprite:
     ld      R24, Z+             ; Load sprite byte

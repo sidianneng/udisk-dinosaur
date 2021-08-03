@@ -12,6 +12,7 @@
 
 .section .data
 rand: .byte 103     // RNG Seed
+.global rand
 
 
 .section .text
