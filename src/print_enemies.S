@@ -16,6 +16,7 @@ sprite_obstacle_bit:
 #define col_cnt     R19
 #define x_pos       R21
 #define sprite_w    R22
+#define pos_cnt		R29
 
 ; .section .data
 ; enemy_pos: .space 3
@@ -33,6 +34,7 @@ print_enemies:
     
 ; Init print enemies
     ldi     col_cnt, 0x00       ; Start from column 0
+	ldi		pos_cnt, 0x00
     ldi     YL, lo8(enemy_pos)  ; Pointer to enemies position 
     ldi     YH, hi8(enemy_pos)
     ld      x_pos, Y+           ; Load 1st enemy position
@@ -42,10 +44,9 @@ print_enemies:
 loop_comlumns:
     cp      col_cnt, x_pos      ; Compare enemy position with current column drawn
     brne    blank_col   
-    lds     R27, rand	
-	cpi     R27, 128
+	andi	pos_cnt, 0x01
+	cpi     pos_cnt, 0x01
 	brlo    obstacle_small
-	dec     R27
     ldi     ZL, lo8(sprite_obstacle+0x4000) ; Load sprite position pointer
     ldi     ZH, hi8(sprite_obstacle+0x4000)
 	rjmp    test1
@@ -53,7 +54,6 @@ obstacle_small:
     ldi     ZL, lo8(sprite_obstacle_small+0x4000) ; Load sprite position pointer
     ldi     ZH, hi8(sprite_obstacle_small+0x4000)	
 test1:
-	sts     rand, R27
     ldi     sprite_w, 5         ; Sprite width -1
 print_sprite:
     ld      R24, Z+             ; Load sprite byte
@@ -62,6 +62,7 @@ print_sprite:
     dec     sprite_w            ; Increase sprite byte count 
     brpl    print_sprite        ; Check if the entire sprite is printed
     ld      x_pos, Y+           ; Next Obstacle position
+	inc		pos_cnt
 blank_col:
     ldi     R24, 0x80           ; Lower bit is set to draw the ground
     rcall   Tx                  ; Send data to display RAM
