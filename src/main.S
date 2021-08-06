@@ -128,6 +128,9 @@ reset_game:
 
 ; Reset player position 
     ldi     H, 0x00
+	
+; Reset enemy position
+	ldi     tmp, 0
     sts     enemy_pos+2, tmp
     ldi     tmp, 120
     sts     enemy_pos+1, tmp
