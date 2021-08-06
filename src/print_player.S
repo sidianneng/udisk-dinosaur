@@ -51,8 +51,7 @@ dec_h:
     mov     R24, page3
     rcall   Tx
     mov     R24, page4
-	ldi     R27, 0x80
-	or      R24, R27
+	ori     R24, 0x80
     rcall   Tx
     dec     _col
     brne    loop_columns
