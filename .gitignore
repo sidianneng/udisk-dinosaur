@@ -7,3 +7,7 @@ RunTinyNotes.ipynb
 .travis.yml
 src/main.txt
 .DS_Store
+
+src/build.bat
+src/debug
+src/output
