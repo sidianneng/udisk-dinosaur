@@ -16,7 +16,8 @@ sprite_obstacle_bit:
 #define col_cnt     R19
 #define x_pos       R21
 #define sprite_w    R22
-#define pos_cnt		R29
+#define pos_cnt		R27
+#define tmp         R20
 
 ; .section .data
 ; enemy_pos: .space 3
@@ -35,12 +36,30 @@ print_enemies:
 ; Init print enemies
     ldi     col_cnt, 0x00       ; Start from column 0
 	ldi		pos_cnt, 0x00
+	
+	lds     tmp, enemy_pos +2   ; Load 3st enemy position
+    tst     tmp
+	breq    pos3_eq_0
+	ori     R26, 0x10           ; set flag bit 4 of R26
+	rjmp    init_print
+pos3_eq_0:
+    mov     tmp, R26
+	andi    tmp, 0x10
+    cpi     tmp, 0x10
+	brlo    init_print
+	
+    andi    R26, 0xef          ;clear bit 4 of R26
+	inc     R26
+	andi    R26, 0x01          ;get the bit 0 and clear the bit 4
+	
+init_print:  
+	add     pos_cnt, R26        ; R26 store the flag of pos_cnt  
     ldi     YL, lo8(enemy_pos)  ; Pointer to enemies position 
     ldi     YH, hi8(enemy_pos)
-    ld      x_pos, Y+           ; Load 1st enemy position
-    tst     x_pos
-    brne    .+4                 ; If first pos = 0 load next
-    ld      x_pos, Y+           ; Load obstacle position
+	ld      x_pos, Y+           ; Load 1st enemy position
+	tst     x_pos
+	brne    loop_comlumns       ; If first pos = 0 load next
+	
 loop_comlumns:
     cp      col_cnt, x_pos      ; Compare enemy position with current column drawn
     brne    blank_col   
@@ -49,11 +68,11 @@ loop_comlumns:
 	brlo    obstacle_small
     ldi     ZL, lo8(sprite_obstacle+0x4000) ; Load sprite position pointer
     ldi     ZH, hi8(sprite_obstacle+0x4000)
-	rjmp    test1
+	rjmp    sprite_width
 obstacle_small:
     ldi     ZL, lo8(sprite_obstacle_small+0x4000) ; Load sprite position pointer
     ldi     ZH, hi8(sprite_obstacle_small+0x4000)	
-test1:
+sprite_width:
     ldi     sprite_w, 5         ; Sprite width -1
 print_sprite:
     ld      R24, Z+             ; Load sprite byte

@@ -71,6 +71,9 @@ main:
     ldi	    tmp, 0x04	; Set pull-up on Button Pin PB4
     out	    PUEB, tmp	
 
+; Reset enemy cnt
+	ldi		R26, 0x00
+
 ; Button interrupt
     sei                     ; Enable interrupts
     sbi     EIMSK, INT0     ; Enable External Interrupt Request 0

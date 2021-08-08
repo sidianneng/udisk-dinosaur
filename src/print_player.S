@@ -16,14 +16,14 @@
 .global print_player
 
 print_player:
-	mov     R26, R24    ; Store the player height
+	mov     R27, R24    ; Store the player height
     rcall   start
     ldi     R24, 0x78   ; Send TWI ADDRESS
     rcall   Tx
     ldi     R24, 0x40   ; Send data command
     rcall   Tx
     ldi     _col, 8      ; Loop count same as the sprite width 
-    ldi     ZL, lo8(player_sprite+0x4000) 
+	ldi     ZL, lo8(player_sprite+0x4000) 
     ldi     ZH, hi8(player_sprite+0x4000) 
 ; Load Sprite
 loop_columns:
@@ -31,7 +31,7 @@ loop_columns:
     ldi     page2, 0x00
     ld      page3, Z+   ; Upper half of the sprite
     ld      page4, Z+   ; Lower half of the sprite
-	mov     _h, R26
+	mov     _h, R27
     rjmp    dec_h
 ; Move sprite on y axis 
 loop_h:
