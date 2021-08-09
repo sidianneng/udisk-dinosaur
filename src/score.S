@@ -3,15 +3,18 @@
 
 
 #define W 5
+#define CNT 10
 
 #define tmp R19
+#define cnt_flag R19
 
-
+.global score_digit_0
 .global score_digit_1
 .global score_digit_2
 .global score_digit_3
 
 .section .data
+score_digit_0: .byte 0x00   ; cnt flag, adjust for score increase speed
 score_digit_1: .byte 0x00   ; Units
 score_digit_2: .byte 0x00   ; Tens
 score_digit_3: .byte 0x00   ; Hundreds
@@ -20,6 +23,13 @@ score_digit_3: .byte 0x00   ; Hundreds
 .global print_score
 
 print_score:
+    lds     cnt_flag, score_digit_0      ; Load cnt flag from memory
+	inc     cnt_flag
+	sts     score_digit_0, cnt_flag
+	cpi     cnt_flag, CNT
+	brlo    print_all_digits
+	ldi     cnt_flag, 0x00
+	sts     score_digit_0, cnt_flag
     lds     R23, score_digit_1      ; Load units position from memory
     subi    R23, (-W)               ; Increase position by font width 
     cpi     R23, (W *10)            ; Check if the end is reached
@@ -39,6 +49,7 @@ store:
 
 ; Print Digits
     ; TWI Start
+print_all_digits:
     rcall   start
     ldi     R24, 0x78
     rcall   Tx
