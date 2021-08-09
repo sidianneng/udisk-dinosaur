@@ -159,8 +159,8 @@ infinite_loop:
 ; Print the score
     ldi	    r22, 0x00	; 0 - Page
     ldi	    r23, 0x00	; 0 - Page
-    ldi	    r24, 0x64	; 100 - Column
-    ldi	    r25, 0x75	; 117 - Column
+    ldi	    r24, 0x6E	; 100 - Column
+    ldi	    r25, 0x7F	; 117 - Column
     rcall	set_draw_region    	
     rcall	print_score   
 
