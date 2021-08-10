@@ -52,6 +52,11 @@ enemy_pos:
     .byte 121
     .byte 0
 
+;.global highest_score
+highest_score_1: .byte 0x00
+highest_score_2: .byte 0x00
+highest_score_3: .byte 0x00
+
 
 
 .section .text
@@ -139,6 +144,26 @@ reset_game:
     sts     enemy_pos+1, tmp
     ldi     tmp, 90
     sts     enemy_pos, tmp
+	
+; Reload the highest record score
+    ldi	    r22, 0x00	; 0 - Page
+    ldi	    r23, 0x00	; 0 - Page
+    ldi	    r24, 0x54	; 84 - Column
+    ldi	    r25, 0x65	; 101 - Column
+    rcall	set_draw_region 
+	
+	rcall   start
+    ldi     R24, 0x78
+    rcall   Tx
+    ldi     R24, 0x40
+    rcall   Tx
+	lds     R24, highest_score_3
+	rcall   print_digit
+	lds     R24, highest_score_2
+	rcall   print_digit
+	lds     R24, highest_score_1
+	rcall   print_digit
+
 infinite_loop:
 
 ; Delay of 50ms to set frame rate
@@ -193,6 +218,38 @@ infinite_loop:
     cpi     H, 8            ; Otherwise check if player is above enemy
     brsh    infinite_loop
 
+	lds      R22, score_digit_3
+	lds      R23, highest_score_3
+	cp       R22, R23
+	breq     compare_ten
+    brlo     goto_gameover
+	lds      R22, score_digit_3
+	sts      highest_score_3, R22
+	lds      R22, score_digit_2
+	sts      highest_score_2, R22
+	lds      R22, score_digit_1
+	sts      highest_score_1, R22
+	rjmp     goto_gameover
+compare_ten:
+	lds      R22, score_digit_2
+	lds      R23, highest_score_2
+	cp       R22, R23
+	breq     compare_unit
+	brlo     goto_gameover
+	lds      R22, score_digit_2
+	sts      highest_score_2, R22
+	lds      R22, score_digit_1
+	sts      highest_score_1, R22
+	rjmp     goto_gameover
+compare_unit:
+	lds      R22, score_digit_1
+	lds      R23, highest_score_1
+	cp       R22, R23
+	brlo     goto_gameover
+	lds      R22, score_digit_1
+	sts      highest_score_1, R22	
+	
+goto_gameover:
 ; GAME OVER
  	ldi     tmp, 4
     ldi     R18, 0xA6    

@@ -21,6 +21,7 @@ score_digit_3: .byte 0x00   ; Hundreds
 
 .section .text
 .global print_score
+.global print_digit
 
 print_score:
     lds     cnt_flag, score_digit_0      ; Load cnt flag from memory
