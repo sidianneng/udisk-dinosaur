@@ -133,6 +133,9 @@ reset_game:
     sts     score_digit_1, tmp
     sts     score_digit_2, tmp
     sts     score_digit_3, tmp
+	;sts     highest_score_1, tmp
+	;sts     highest_score_2, tmp
+	;sts     highest_score_3, tmp
 
 ; Reset player position 
     ldi     H, 0x00
