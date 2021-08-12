@@ -64,7 +64,6 @@ highest_score_3: .byte 0x00
 ; .global __do_copy_data
 .global INT0_vect
 
-
 INT0_vect:
     ldi jump, JUMP_SPEED    ; Set the vertical jump speed to +4
     reti
@@ -83,6 +82,12 @@ main:
     sei                     ; Enable interrupts
     sbi     EIMSK, INT0     ; Enable External Interrupt Request 0
     sbi     EICRA, ISC01    ; Interrupt activated on falling edge of PB2 (INT0)
+	
+; ADC init
+    ldi     tmp, 0x03
+    out     ADMUX, tmp     ; set PB3 as adc input
+	ldi     tmp, 0xc3
+	out     ADCSRA, tmp    ; config and enable adc conversion
 
 ; Sleep mode
     ldi     tmp, 0x05       ; Enable sleep mode and select power down
@@ -173,7 +178,18 @@ infinite_loop:
     ldi     R24, 0xD3
     ldi     R25, 0x30
     rcall _delay
-
+	
+; Get PB3 ADC value
+    in      tmp, ADCSRA
+	andi    tmp, 0x10
+	tst     tmp
+	breq    mov_player
+	in      tmp, ADCL
+	cpi     tmp, 234
+	brsh    mov_player
+	ldi     jump, JUMP_SPEED
+	
+mov_player:
 ; Move the player
     add     H, jump     ; Change height by jump direction
     cpi     H, H_MAX    ; Check if H_MAX is reached
@@ -213,12 +229,12 @@ infinite_loop:
 
  	
 ; Check if GAME OVER
-    lds     enemy_x, enemy_pos 
-    cpi     enemy_x, 16     ; Enemy position higher than player position. Don't care player height
-    brsh    infinite_loop
-    cpi     enemy_x, 10     ; Enemy has passed. Don't care player height
-    brlo    infinite_loop
-    cpi     H, 8            ; Otherwise check if player is above enemy
+    ;lds     enemy_x, enemy_pos 
+    ;cpi     enemy_x, 16     ; Enemy position higher than player position. Don't care player height
+    ;brsh    infinite_loop
+    ;cpi     enemy_x, 10     ; Enemy has passed. Don't care player height
+    ;brlo    infinite_loop
+    ;cpi     H, 8            ; Otherwise check if player is above enemy
     brsh    infinite_loop
 
 	lds      R22, score_digit_3
