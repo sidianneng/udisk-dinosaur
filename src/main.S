@@ -86,8 +86,6 @@ main:
 ; ADC init
     ldi     tmp, 0x03
     out     ADMUX, tmp     ; set PB3 as adc input
-	ldi     tmp, 0xc3
-	out     ADCSRA, tmp    ; config and enable adc conversion
 
 ; Sleep mode
     ldi     tmp, 0x05       ; Enable sleep mode and select power down
@@ -173,21 +171,18 @@ reset_game:
 	rcall   print_digit
 
 infinite_loop:
-
+	ldi     tmp, 0xc3
+	out     ADCSRA, tmp    ; config and enable adc conversion
 ; Delay of 50ms to set frame rate
     ldi     R24, 0xD3
     ldi     R25, 0x30
     rcall _delay
 	
 ; Get PB3 ADC value
-    in      tmp, ADCSRA
-	andi    tmp, 0x10
-	tst     tmp
-	breq    mov_player
 	in      tmp, ADCL
-	cpi     tmp, 234
+	cpi     tmp, 204
 	brsh    mov_player
-	ldi     jump, JUMP_SPEED
+	ldi     jump, -8
 	
 mov_player:
 ; Move the player
