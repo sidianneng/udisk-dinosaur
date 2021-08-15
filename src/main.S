@@ -182,7 +182,8 @@ infinite_loop:
 	in      tmp, ADCL
 	cpi     tmp, 204
 	brsh    mov_player
-	ldi     jump, -8
+	ldi     jump, 0
+	ldi     H, 0
 	
 mov_player:
 ; Move the player
