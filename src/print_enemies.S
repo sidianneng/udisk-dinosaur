@@ -10,9 +10,6 @@ sprite_obstacle:
 sprite_obstacle_small:
 .byte 0x10,0x20,0xf8,0x20,0x10,0x00;small cactus
 
-sprite_obstacle_bit:
-.byte 0x0c,0x10,0xff,0xfe,0x10,0x0f;big cactus
-
 #define col_cnt     R19
 #define x_pos       R21
 #define sprite_w    R22
