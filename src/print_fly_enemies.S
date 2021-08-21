@@ -16,9 +16,9 @@ sprite_obstacle:
 ; enemy_pos: .space 3
 
 .section .text
-.global print_enemies
+.global print_fly_enemies
 
-print_enemies:
+print_fly_enemies:
 ; TWI Start
     rcall   start
     ldi     R24, 0x78
@@ -30,13 +30,23 @@ print_enemies:
     ldi     col_cnt, 0x00       ; Start from column 0
     ldi     YL, lo8(enemy_pos)  ; Pointer to enemies position 
     ldi     YH, hi8(enemy_pos)
-	ld      x_pos, Y+           ; Load 1st enemy position
-	mov		tmp, x_pos
-	andi    x_pos, 0x7f
-	
+    ld      x_pos, Y+           ; Load 1st enemy position
+
 loop_comlumns:
+	mov     tmp, x_pos
+;	andi    x_pos, 0x7f
+	andi	tmp, 0x80
+	tst		tmp
+	brne	test1
+	
+    ldi     R24, 0x00           ; Lower bit is set to draw the ground
+    rcall   Tx                  ; Send data to display RAM
+    inc     col_cnt             ; Increase column count 	
+	ld      x_pos, Y+           ; Next Obstacle position
+	rjmp	blank_col
+test1:
     cp      col_cnt, x_pos      ; Compare enemy position with current column drawn
-    brne    blank_col   
+    brne    blank_col           
     ldi     ZL, lo8(sprite_obstacle+0x4000) ; Load sprite position pointer
     ldi     ZH, hi8(sprite_obstacle+0x4000)
     ldi     sprite_w, 5         ; Sprite width -1
@@ -47,10 +57,8 @@ print_sprite:
     dec     sprite_w            ; Increase sprite byte count 
     brpl    print_sprite        ; Check if the entire sprite is printed
     ld      x_pos, Y+           ; Next Obstacle position
-	mov		tmp, x_pos
-	andi    x_pos, 0x7f
 blank_col:
-    ldi     R24, 0x80           ; Lower bit is set to draw the ground
+    ldi     R24, 0x00           ; Lower bit is set to draw the ground
     rcall   Tx                  ; Send data to display RAM
     inc     col_cnt             ; Increase column count 
     cpi     col_cnt, 128        ; Check if the whole display width is printed
@@ -60,5 +68,3 @@ blank_col:
     rcall   stop
 
 ret
-
-

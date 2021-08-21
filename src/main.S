@@ -52,13 +52,6 @@ enemy_pos:
     .byte 121
     .byte 0
 
-;.global highest_score
-highest_score_1: .byte 0x00
-highest_score_2: .byte 0x00
-highest_score_3: .byte 0x00
-
-
-
 .section .text
 .global main
 ; .global __do_copy_data
@@ -74,9 +67,6 @@ main:
     out	    DDRB, tmp	
     ldi	    tmp, 0x04	; Set pull-up on Button Pin PB4
     out	    PUEB, tmp	
-
-; Reset enemy cnt
-	ldi		R26, 0x00
 
 ; Button interrupt
     sei                     ; Enable interrupts
@@ -131,15 +121,6 @@ reset_game:
     brne	.-12     	
     rcall	stop   	
 
-; Reset Score
-    ldi     tmp, 0x00
-    sts     score_digit_1, tmp
-    sts     score_digit_2, tmp
-    sts     score_digit_3, tmp
-	;sts     highest_score_1, tmp
-	;sts     highest_score_2, tmp
-	;sts     highest_score_3, tmp
-
 ; Reset player position 
     ldi     H, 0x00
 	
@@ -150,25 +131,6 @@ reset_game:
     sts     enemy_pos+1, tmp
     ldi     tmp, 90
     sts     enemy_pos, tmp
-	
-; Reload the highest record score
-    ldi	    r22, 0x00	; 0 - Page
-    ldi	    r23, 0x00	; 0 - Page
-    ldi	    r24, 0x54	; 84 - Column
-    ldi	    r25, 0x65	; 101 - Column
-    rcall	set_draw_region 
-	
-	rcall   start
-    ldi     R24, 0x78
-    rcall   Tx
-    ldi     R24, 0x40
-    rcall   Tx
-	lds     R24, highest_score_3
-	rcall   print_digit
-	lds     R24, highest_score_2
-	rcall   print_digit
-	lds     R24, highest_score_1
-	rcall   print_digit
 
 infinite_loop:
 	ldi     tmp, 0xc3
@@ -204,25 +166,34 @@ mov_player:
     rcall	set_draw_region    	
     rcall	print_score   
 
-; Update and print the enemies
+; Update the pos of enemies
     rcall   update_enemy_pos
+	
+; Print the enemies
     ldi	    r22, 0x03	; 3 - Page
     ldi	    r23, 0x03	; 3 - Page
     ldi	    r24, 0x00	; 0 - Column
     ldi	    r25, 0x7F	; 127 - Column
     rcall	set_draw_region  
     rcall   print_enemies
+	
+; Print the fly enemies
+    ldi	    r22, 0x02	; 2 - Page
+    ldi	    r23, 0x02	; 2 - Page
+    ldi	    r24, 0x00	; 0 - Column
+    ldi	    r25, 0x7F	; 127 - Column
+;    rcall	set_draw_region  
+;    rcall   print_fly_enemies
 
 ; Print the player
     ldi	    r22, 0x00	; 0 - Page
     ldi	    r23, 0x03	; 3 - Page
-    ldi	    r24, 0x0A	; 10 - Column
+    ldi	    r24, 0x0a	; 10 - Column
     ldi	    r25, 0x11	; 17 - Column
     rcall   set_draw_region
 
     mov     R24, H
     rcall   print_player
-
  	
 ; Check if GAME OVER
     ;lds     enemy_x, enemy_pos 
@@ -231,38 +202,8 @@ mov_player:
     ;cpi     enemy_x, 10     ; Enemy has passed. Don't care player height
     ;brlo    infinite_loop
     ;cpi     H, 8            ; Otherwise check if player is above enemy
-    brsh    infinite_loop
-
-	lds      R22, score_digit_3
-	lds      R23, highest_score_3
-	cp       R22, R23
-	breq     compare_ten
-    brlo     goto_gameover
-	lds      R22, score_digit_3
-	sts      highest_score_3, R22
-	lds      R22, score_digit_2
-	sts      highest_score_2, R22
-	lds      R22, score_digit_1
-	sts      highest_score_1, R22
-	rjmp     goto_gameover
-compare_ten:
-	lds      R22, score_digit_2
-	lds      R23, highest_score_2
-	cp       R22, R23
-	breq     compare_unit
-	brlo     goto_gameover
-	lds      R22, score_digit_2
-	sts      highest_score_2, R22
-	lds      R22, score_digit_1
-	sts      highest_score_1, R22
-	rjmp     goto_gameover
-compare_unit:
-	lds      R22, score_digit_1
-	lds      R23, highest_score_1
-	cp       R22, R23
-	brlo     goto_gameover
-	lds      R22, score_digit_1
-	sts      highest_score_1, R22	
+    ;brsh    infinite_loop
+	rjmp    infinite_loop
 	
 goto_gameover:
 ; GAME OVER

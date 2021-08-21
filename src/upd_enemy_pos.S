@@ -6,8 +6,6 @@
 #define pos3 R20
 #define tmp1 R24
 
-
-
 #define STEP 3
 
 .section .data
@@ -22,6 +20,9 @@ update_enemy_pos:
     lds     pos1, enemy_pos
     lds     pos2, enemy_pos +1
     lds     pos3, enemy_pos +2
+	andi	pos1, 0x7f
+	andi	pos2, 0x7f
+	andi	pos3, 0x7f
     
 ; Update position Enemy 3
     subi    pos3, STEP         ; Move enemy position by STEP
@@ -45,6 +46,12 @@ update_enemy_pos:
     brlo    enemy_generated
 new_enemy:    
     ldi     pos3, 120       ; A new enemy is generated
+;	lds     tmp1, rand
+;	andi    tmp1, 0x01
+;	breq    enemy_generated
+;    andi     pos3, 0x7f
+	ori		pos3, 0x80
+;	ldi		pos3, 248
 
 enemy_generated:
 ; Update position Enemy 2
