@@ -23,8 +23,16 @@ print_player:
     ldi     R24, 0x40   ; Send data command
     rcall   Tx
     ldi     _col, 8      ; Loop count same as the sprite width 
+	andi	R26, 0x01
+	tst		R26
+	ldi		R26, 0x00
+	brne	load_player_down
 	ldi     ZL, lo8(player_sprite_normal+0x4000) 
     ldi     ZH, hi8(player_sprite_normal+0x4000) 
+	rjmp	loop_columns
+load_player_down:
+	ldi     ZL, lo8(player_sprite_down+0x4000) 
+    ldi     ZH, hi8(player_sprite_down+0x4000) 
 ; Load Sprite
 loop_columns:
     ldi     page1, 0x00

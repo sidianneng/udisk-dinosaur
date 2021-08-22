@@ -139,6 +139,7 @@ infinite_loop:
 	brsh    mov_player
 	ldi     jump, 0
 	ldi     H, 0
+	ldi		R26, 0x01
 	
 mov_player:
 ; Move the player
