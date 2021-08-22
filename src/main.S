@@ -54,7 +54,6 @@ enemy_pos:
 
 .section .text
 .global main
-; .global __do_copy_data
 .global INT0_vect
 
 INT0_vect:
@@ -82,12 +81,6 @@ main:
     out     SMCR, tmp       ; 
 
 reset_game:
-
-; Delay of 50ms before OLED initialization
-    ldi     R24, 0xD3
-    ldi     R25, 0x30
-    rcall   _delay
-
 
 ; OLED Display Initialization
     ldi     ZL, lo8(display_init)
@@ -125,8 +118,8 @@ reset_game:
     ldi     H, 0x00
 	
 ; Reset enemy position
-	ldi     tmp, 0
-    sts     enemy_pos+2, tmp
+;	ldi     tmp, 0
+;    sts     enemy_pos+2, tmp
     ldi     tmp, 120
     sts     enemy_pos+1, tmp
     ldi     tmp, 90
@@ -196,27 +189,19 @@ mov_player:
     rcall   print_player
  	
 ; Check if GAME OVER
-    ;lds     enemy_x, enemy_pos 
-    ;cpi     enemy_x, 16     ; Enemy position higher than player position. Don't care player height
-    ;brsh    infinite_loop
-    ;cpi     enemy_x, 10     ; Enemy has passed. Don't care player height
-    ;brlo    infinite_loop
-    ;cpi     H, 8            ; Otherwise check if player is above enemy
-    ;brsh    infinite_loop
-	rjmp    infinite_loop
+    lds     enemy_x, enemy_pos 
+    cpi     enemy_x, 16     ; Enemy position higher than player position. Don't care player height
+    brsh    infinite_loop
+    cpi     enemy_x, 10     ; Enemy has passed. Don't care player height
+    brlo    infinite_loop
+    cpi     H, 8            ; Otherwise check if player is above enemy
+    brsh    infinite_loop
+;	rjmp    infinite_loop
 	
 goto_gameover:
-; GAME OVER
- 	ldi     tmp, 4
-    ldi     R18, 0xA6    
-game_over: 
-    rcall   invert_display
-; Delay
     ldi     R24, 0xFF
     ldi     R25, 0xFF
     rcall   _delay
-    dec     tmp
-    brne    game_over
 
 ; Display Off
     rcall	start    	
@@ -250,21 +235,4 @@ _delay:
     subi	R24, 0x01	; 1
     sbci	R25, 0x00	; 0
     brne	.-6
-ret
-
-invert_display:
-    rcall	start    	
-    ldi	    R24, OLED_ADDR	    ; OLED Address
-    rcall	Tx    	
-    ldi	    R24, OLED_COMMANDS	; OLED Commands
-    rcall	Tx
-    ldi     R24, 0x01
-    eor     R18, R24
-    mov     R24, R18
-    rcall	Tx     
-    ldi     R24, 0x00
-    rcall	Tx  
-    ldi     R24, 0x00
-    rcall	Tx     
-    rcall	stop  
 ret
