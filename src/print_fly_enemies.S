@@ -5,12 +5,12 @@
 #include <avr/io.h>
 
 sprite_obstacle:
-.byte 0x18,0x20,0xfe,0xfc,0x30,0x1e
+.byte 0xff,0xff,0xff,0xff,0xff,0xff
 
 #define col_cnt     R19
 #define x_pos       R21
 #define sprite_w    R22
-#define tmp         R20
+#define tmp         R18
 
 ; .section .data
 ; enemy_pos: .space 3
@@ -31,32 +31,31 @@ print_fly_enemies:
     ldi     YL, lo8(enemy_pos)  ; Pointer to enemies position 
     ldi     YH, hi8(enemy_pos)
     ld      x_pos, Y+           ; Load 1st enemy position
+	mov		tmp, x_pos
+	andi    x_pos, 0x7f
 
 loop_comlumns:
-	mov     tmp, x_pos
-;	andi    x_pos, 0x7f
-	andi	tmp, 0x80
-	tst		tmp
-	brne	test1
-	
-    ldi     R24, 0x00           ; Lower bit is set to draw the ground
-    rcall   Tx                  ; Send data to display RAM
-    inc     col_cnt             ; Increase column count 	
-	ld      x_pos, Y+           ; Next Obstacle position
-	rjmp	blank_col
-test1:
     cp      col_cnt, x_pos      ; Compare enemy position with current column drawn
     brne    blank_col           
     ldi     ZL, lo8(sprite_obstacle+0x4000) ; Load sprite position pointer
     ldi     ZH, hi8(sprite_obstacle+0x4000)
     ldi     sprite_w, 5         ; Sprite width -1
 print_sprite:
+	andi	tmp, 0x80
+	cpi		tmp, 0x80
+	brsh	test1
+	ldi		R24, 0x00
+	rjmp	test2
+test1:
     ld      R24, Z+             ; Load sprite byte
+test2:
     rcall   Tx                  ; Send sprite byte
     inc     col_cnt             ; Increase column count 
     dec     sprite_w            ; Increase sprite byte count 
     brpl    print_sprite        ; Check if the entire sprite is printed
     ld      x_pos, Y+           ; Next Obstacle position
+	mov		tmp, x_pos
+	andi    x_pos, 0x7f
 blank_col:
     ldi     R24, 0x00           ; Lower bit is set to draw the ground
     rcall   Tx                  ; Send data to display RAM

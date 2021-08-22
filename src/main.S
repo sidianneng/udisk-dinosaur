@@ -182,8 +182,8 @@ mov_player:
     ldi	    r23, 0x02	; 2 - Page
     ldi	    r24, 0x00	; 0 - Column
     ldi	    r25, 0x7F	; 127 - Column
-;    rcall	set_draw_region  
-;    rcall   print_fly_enemies
+    rcall	set_draw_region  
+    rcall   print_fly_enemies
 
 ; Print the player
     ldi	    r22, 0x00	; 0 - Page

@@ -10,7 +10,7 @@ sprite_obstacle:
 #define col_cnt     R19
 #define x_pos       R21
 #define sprite_w    R22
-#define tmp         R20
+#define tmp         R18
 
 ; .section .data
 ; enemy_pos: .space 3
@@ -41,7 +41,14 @@ loop_comlumns:
     ldi     ZH, hi8(sprite_obstacle+0x4000)
     ldi     sprite_w, 5         ; Sprite width -1
 print_sprite:
+	andi	tmp, 0x80
+	cpi		tmp, 0x80
+	brlo	test1
+	ldi		R24, 0x80
+	rjmp	test2
+test1:
     ld      R24, Z+             ; Load sprite byte
+test2:
     rcall   Tx                  ; Send sprite byte
     inc     col_cnt             ; Increase column count 
     dec     sprite_w            ; Increase sprite byte count 
