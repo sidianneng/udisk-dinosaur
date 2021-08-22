@@ -190,13 +190,27 @@ mov_player:
     rcall   print_player
  	
 ; Check if GAME OVER
-    lds     enemy_x, enemy_pos 
+	mov		tmp, R26
+	ldi		R26, 0x00
+	lds     enemy_x, enemy_pos
+	andi	enemy_x, 0x7f
     cpi     enemy_x, 16     ; Enemy position higher than player position. Don't care player height
     brsh    infinite_loop
     cpi     enemy_x, 10     ; Enemy has passed. Don't care player height
     brlo    infinite_loop
+	
+	lds     enemy_x, enemy_pos
+	andi	enemy_x, 0x80
+	cpi		enemy_x, 0x80
+	breq	chk_fly_enemies
     cpi     H, 8            ; Otherwise check if player is above enemy
     brsh    infinite_loop
+	rjmp	goto_gameover
+	
+chk_fly_enemies:
+	tst		tmp
+	brne	infinite_loop
+	
 ;	rjmp    infinite_loop
 	
 goto_gameover:

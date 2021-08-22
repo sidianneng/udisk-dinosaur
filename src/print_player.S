@@ -25,7 +25,6 @@ print_player:
     ldi     _col, 8      ; Loop count same as the sprite width 
 	andi	R26, 0x01
 	tst		R26
-	ldi		R26, 0x00
 	brne	load_player_down
 	ldi     ZL, lo8(player_sprite_normal+0x4000) 
     ldi     ZH, hi8(player_sprite_normal+0x4000) 
