@@ -23,8 +23,8 @@ print_player:
     ldi     R24, 0x40   ; Send data command
     rcall   Tx
     ldi     _col, 8      ; Loop count same as the sprite width 
-	ldi     ZL, lo8(player_sprite+0x4000) 
-    ldi     ZH, hi8(player_sprite+0x4000) 
+	ldi     ZL, lo8(player_sprite_normal+0x4000) 
+    ldi     ZH, hi8(player_sprite_normal+0x4000) 
 ; Load Sprite
 loop_columns:
     ldi     page1, 0x00
@@ -59,7 +59,7 @@ dec_h:
 ret
 
 
-player_sprite: 
+player_sprite_normal: 
 .byte 0x00, 0x07 ; Column 1
 .byte 0x00, 0x0c ; Column 2
 .byte 0x00, 0x7e ; Column 3
@@ -68,3 +68,13 @@ player_sprite:
 .byte 0xd0, 0x07 ; Column 6
 .byte 0x70, 0x01 ; Column 7
 .byte 0x60, 0x00 ; Column 8
+
+player_sprite_down: 
+.byte 0x00, 0x18 ; Column 1
+.byte 0x00, 0x30 ; Column 2
+.byte 0x00, 0xf8 ; Column 3
+.byte 0x00, 0x3c ; Column 4
+.byte 0x00, 0xfc ; Column 5
+.byte 0x00, 0x18 ; Column 6
+.byte 0x00, 0x1c ; Column 7
+.byte 0x00, 0x1c ; Column 8
