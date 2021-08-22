@@ -112,7 +112,13 @@ reset_game:
     rcall	Tx    	
     subi	tmp, 0x01
     brne	.-12     	
-    rcall	stop   	
+    rcall	stop   
+
+; Reset Score
+    ldi     tmp, 0x00
+    sts     score_digit_1, tmp
+    sts     score_digit_2, tmp
+    sts     score_digit_3, tmp	
 
 ; Reset player position 
     ldi     H, 0x00
