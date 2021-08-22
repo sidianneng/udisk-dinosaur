@@ -57,7 +57,7 @@ enemy_pos:
 .global INT0_vect
 
 INT0_vect:
-    ldi jump, JUMP_SPEED    ; Set the vertical jump speed to +4
+    ldi	jump, JUMP_SPEED    ; Set the vertical jump speed to +4
     reti
 
 main:
@@ -118,8 +118,8 @@ reset_game:
     ldi     H, 0x00
 	
 ; Reset enemy position
-;	ldi     tmp, 0
-;    sts     enemy_pos+2, tmp
+	ldi     tmp, 0
+    sts     enemy_pos+2, tmp
     ldi     tmp, 120
     sts     enemy_pos+1, tmp
     ldi     tmp, 90
