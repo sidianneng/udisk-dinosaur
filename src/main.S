@@ -57,6 +57,8 @@ enemy_pos:
 .global INT0_vect
 
 INT0_vect:
+	tst H
+	brne .+2
     ldi	jump, JUMP_SPEED    ; Set the vertical jump speed to +4
     reti
 
