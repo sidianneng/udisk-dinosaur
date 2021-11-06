@@ -40,9 +40,9 @@ update_enemy_pos:
     
 ; Generate enemy  
     ldi     pos3, 0x00
-    cpi     pos2, 105       ; If enemy 2 position>105 no new enemy(min distance between two enemies is 15)
+    cpi     pos2, 80       ; If enemy 2 position>80 no new enemy(min distance between two enemies is 40)
     brpl    enemy_generated
-    cpi     pos2, 70        ; Generate enemy 3 if enemy 2 is in x<90 (max distance between two enemies is 30)
+    cpi     pos2, 60        ; Generate enemy 3 if enemy 2 is in x<60 (max distance between two enemies is 60)
     brmi    new_enemy
 ; Xorshift RNG (kind of...)
     lds     tmp1, rand      ; Load previous random number
