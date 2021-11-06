@@ -222,7 +222,6 @@ chk_fly_enemies:
 ;	rjmp    infinite_loop
 	
 goto_gameover:
-    ldi     R24, 0xFF
     ldi     R25, 0xFF
     rcall   _delay
 
