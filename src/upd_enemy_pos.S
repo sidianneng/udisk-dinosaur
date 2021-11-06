@@ -36,6 +36,9 @@ update_enemy_pos:
     
 ; Update position Enemy 3
     subi    pos3, STEP         ; Move enemy position by STEP
+	lds     tmp1, score_digit_2
+	andi	tmp1, 0x03
+	sub		pos3, tmp1
     brpl    enemy_generated    ; If position is <=0 then generate the enemy
     
 ; Generate enemy  
@@ -68,6 +71,9 @@ new_enemy:
 enemy_generated:
 ; Update position Enemy 2
     subi    pos2, STEP         ; Move enemy position by STEP
+	lds     tmp1, score_digit_2
+	andi	tmp1, 0x03
+	sub		pos2, tmp1
     brpl    .+6                ; If the position is negative than swap it with Enemy 3 
     mov     pos2, pos3
 	mov		flag2,flag3
@@ -75,6 +81,7 @@ enemy_generated:
     
 ; Update position Enemy 1
     subi    pos1, STEP         ; Move enemy position by STEP
+	sub		pos1, tmp1
     brpl    .+10
     mov     pos1, pos2
 	mov		flag1,flag2
