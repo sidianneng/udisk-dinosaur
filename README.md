@@ -1,62 +1,40 @@
-# RunTiny
-Endless runner game developed for the AVR ATtiny10 microcontroller and a 128x32 monochrome OLED Display.
+# udisk-dinosaur
 
+![udisk-dinosaur static pic](./assets/static-pic.png)
 
-The entire code is written in assembly to optimize the space and fit it into the 1kB flash memory. 
-The firmware, that occupies 778 bytes in total, contains the game as well as handling the microcontroller I/O and display communication through TWI.
+---
+## 项目简介
+本项目通过一个只有6个引脚的MCU(ATtiny10)以及一块128x32的OLED屏幕实现了一个小游戏机。
 
-## Solar Powered Keychain
+![udisk-dinosaur static pic](./assets/play-game.gif)
 
-![RunTiny - Solar Powered Game](./assets/RTR.jpg)
+---
+## 功能描述
+由于MCU内部存储空间极其有限(1024字节)，因此本项目的源代码通过汇编语言进行编写，经过调整
+优化，在使用完全部1024字节的存储空间后，这个游戏机实现了如下功能：
+-  小恐龙跳跃和下蹲动作
+-  地面和空中障碍物的随机生成
+-  分数统计
+-  游戏速度的自动变化
+-  通过将一个U盘和游戏机安装到同一个结构中，解决游戏机的供电问题，同时还增加了U盘功能。
 
-RunTiny lives on a small pcb of just 33mm by 25mm. It's powered by a 1V solar cell that charges a supercapacitor through a boost converter, so no batteries are needed.
-A 0.1F supercapacitor needs a few seconds of direct sunlight to charge. After that, the game can run an unlimited time with a lower light intensity. Once fully charged, the energy stored is enough to play for 20 or 30 seconds with no light.
+---
+## 使用方法
+接上电源后游戏自动开始运行，通过屏幕旁边的按键控制小恐龙的跳跃和下蹲，以此来躲避地面和空中
+的障碍物，另外障碍物移动速度会随着分数的变化而不同，游戏过程中如果小恐龙碰到障碍物，游戏
+结束，屏幕熄灭，如果要再次开始，按下跳跃按键即可再次开始。
 
-The PCB gerber files are in the hardware folder. The passive components footprint is mostly 0603 but there are three 0402 resistors. Besides this, it's fairly easy to build and more details are [here](http://www.bitbanging.space/posts/smallest-solar-powered-videogame).
+---
+## 本工程使用方法
+- Firmware中存放的当前最新的固件，可以直接下载到机器中运行。
+- hardware中存放了这个游戏机的3D结构件文件以及电路原理图和PCB生产文件。
+- src中存放了软件的源代码，安装AVR相关的编译工具链后即可编译源码。
 
-## Usage
-The game mechanics is quite intuitive: use the button to jump the obstacles.
-When an obstacle hits the player the microcontroller goes into sleep mode. A new button press will awake the microcontroller and restart the game.
-<div><img src="./assets/RunTiny.GIF" width=350px></div>
+---
+## 鸣谢
+本项目是基于[ridoluc](https://github.com/ridoluc)的[RunTiny](https://github.com/ridoluc/RunTiny)项目改进而来。非常感谢他做出如此有意思的项目。
+作为感谢，我也对原始项目提交了问题修复的补丁。
 
-
-## Make your own
-RunTiny needs just three components in its simplest form:
-- ATtiny10 (and breakout board)
-- OLED Display 128x31 (SSD1306)
-- Push-button
-
-plus some wires, a breadboard and a power source.
-![RunTiny - ATtiny10 Game](./assets/RunTiny_game.jpg)
-
-### Wiring
-The ATtiny10 has 3 usable I/O (PB3 is the reset) and are all used as follows:
-- PB0: SDA
-- PB1: SCL
-- PB2: Push-button (INT0)
-
-This schematic shows the circuit connections:
-<div><img src="./assets/schematics.png" width=350px></div>
-
-### Power Source
-Anything between 3.3V-4.5V will do. 
-Tested with:
-- 1S 150mAh Lipo 
-- CR2032 button battery.
-
-## Firmware Build
-If you use PlatformIO you can follow [this guide](http://www.bitbanging.space/posts/attiny10-programming-platformio-terminal). It shows how to set-up the ATtiny10 environment. After that, it's very easy to compile and upload the firmware on the chip. 
-As an alternative, it can be compiled using avr-gcc directly.
-
-## Firmware Upload
-If you just want to upload the firmware, you can do so using avrdude and USBASP. 
-
-Be sure the USBASP jumper is set on 5V and the firmware is up to date (the firmware loaded on most devices sold doesn't support TPI required for the ATTiny10). You can use [these instructions](http://www.bitbanging.space/posts/usbasp-firmware-update) to update the USBASP firmware.
-
-Use this command (mind the paths of avrdude and its config file):
-```
-./avrdude -e -v -p attiny10 -C ./avrdude.conf -c usbasp -U flash:w:firmware.hex:i -P usb
-```
-
-## ATtiny85 and more
-The game should work on other AVR devices (i.e. ATtiny85) with minor changes (not tested yet though).
+---
+## 介绍视频
+https://www.bilibili.com/video/BV1uh41187qr?spm_id_from=333.999.0.0
